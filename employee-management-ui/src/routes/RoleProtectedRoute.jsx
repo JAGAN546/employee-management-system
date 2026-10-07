@@ -13,12 +13,7 @@ const RoleProtectedRoute = ({ allowedRoles, children }) => {
     return <Navigate to="/dashboard" replace />;
   }
 
-  return (
-    <>
-      <Navbar />
-      {children}
-    </>
-  );
+  return <Navbar>{children}</Navbar>;
 };
 
 export default RoleProtectedRoute;

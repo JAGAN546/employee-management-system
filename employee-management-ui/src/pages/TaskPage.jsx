@@ -8,6 +8,34 @@ const NEXT_STATUS_OPTIONS = {
   CANCELLED: [],
 };
 
+const getStatusBadge = (status) => {
+  switch (status) {
+    case 'COMPLETED':
+      return 'badge badge-success';
+    case 'IN_PROGRESS':
+      return 'badge badge-info';
+    case 'TODO':
+      return 'badge badge-warning';
+    case 'CANCELLED':
+      return 'badge badge-neutral';
+    default:
+      return 'badge badge-neutral';
+  }
+};
+
+const getPriorityBadge = (priority) => {
+  switch (priority) {
+    case 'HIGH':
+      return 'badge badge-error';
+    case 'MEDIUM':
+      return 'badge badge-warning';
+    case 'LOW':
+      return 'badge badge-neutral';
+    default:
+      return 'badge badge-neutral';
+  }
+};
+
 const TaskPage = () => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -44,52 +72,76 @@ const TaskPage = () => {
   };
 
   return (
-    <div style={{ padding: '40px', fontFamily: 'sans-serif' }}>
-      <h2>My Tasks</h2>
+    <div>
+      <div className="page-header">
+        <h1>My Tasks</h1>
+        <p>View and update the status of your assigned tasks</p>
+      </div>
 
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {loading && <p>Loading tasks...</p>}
-      {!loading && tasks.length === 0 && <p>No tasks assigned.</p>}
+      {error && <div className="alert alert-error">{error}</div>}
 
-      {!loading && tasks.length > 0 && (
-        <table border="1" cellPadding="8" style={{ borderCollapse: 'collapse' }}>
-          <thead>
-            <tr>
-              <th>Title</th>
-              <th>Priority</th>
-              <th>Due Date</th>
-              <th>Status</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {tasks.map((task) => {
-              const nextOptions = NEXT_STATUS_OPTIONS[task.status] || [];
-              return (
-                <tr key={task.id}>
-                  <td>{task.title}</td>
-                  <td>{task.priority}</td>
-                  <td>{task.dueDate || '—'}</td>
-                  <td>{task.status}</td>
-                  <td>
-                    {nextOptions.length === 0 && '—'}
-                    {nextOptions.map((option) => (
-                      <button
-                        key={option}
-                        onClick={() => handleStatusChange(task.id, option)}
-                        disabled={updatingId === task.id}
-                        style={{ marginRight: '6px' }}
-                      >
-                        Mark as {option.replace('_', ' ')}
-                      </button>
-                    ))}
-                  </td>
+      <div className="card">
+        {loading && <div className="loading-state">Loading tasks...</div>}
+
+        {!loading && tasks.length === 0 && (
+          <div className="empty-state">No tasks assigned.</div>
+        )}
+
+        {!loading && tasks.length > 0 && (
+          <div className="table-container">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Priority</th>
+                  <th>Due Date</th>
+                  <th>Status</th>
+                  <th>Action</th>
                 </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      )}
+              </thead>
+              <tbody>
+                {tasks.map((task) => {
+                  const nextOptions = NEXT_STATUS_OPTIONS[task.status] || [];
+                  return (
+                    <tr key={task.id}>
+                      <td>{task.title}</td>
+                      <td>
+                        <span className={getPriorityBadge(task.priority)}>
+                          {task.priority}
+                        </span>
+                      </td>
+                      <td>{task.dueDate || '—'}</td>
+                      <td>
+                        <span className={getStatusBadge(task.status)}>
+                          {task.status}
+                        </span>
+                      </td>
+                      <td>
+                        {nextOptions.length === 0 && (
+                          <span className="text-muted">—</span>
+                        )}
+                        {nextOptions.map((option) => (
+                          <button
+                            key={option}
+                            className="btn btn-primary btn-sm"
+                            onClick={() => handleStatusChange(task.id, option)}
+                            disabled={updatingId === task.id}
+                            style={{ marginRight: '6px' }}
+                          >
+                            {updatingId === task.id
+                              ? 'Updating...'
+                              : `Mark as ${option.replace('_', ' ')}`}
+                          </button>
+                        ))}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

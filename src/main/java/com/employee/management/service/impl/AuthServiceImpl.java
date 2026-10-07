@@ -37,15 +37,10 @@ public class AuthServiceImpl implements AuthService {
                     "A user with email " + requestDto.getEmail() + " already exists");
         }
 
-        User user = new User();
-        user.setEmail(requestDto.getEmail());
-        user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
-        user.setRole(requestDto.getRole());
-
-        User savedUser = userRepository.save(user);
+        Employee employee = null;
 
         if (requestDto.getRole() == Role.EMPLOYEE) {
-            Employee employee = employeeRepository.findByEmail(requestDto.getEmail())
+            employee = employeeRepository.findByEmail(requestDto.getEmail())
                     .orElseThrow(() -> new EmployeeNotFoundException(
                             "No employee record found with this email. " +
                                     "Please contact HR to be added before registering."));
@@ -54,7 +49,16 @@ public class AuthServiceImpl implements AuthService {
                 throw new IllegalArgumentException(
                         "This employee record is already linked to a login account");
             }
+        }
 
+        User user = new User();
+        user.setEmail(requestDto.getEmail());
+        user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
+        user.setRole(requestDto.getRole());
+
+        User savedUser = userRepository.save(user);
+
+        if (employee != null) {
             employee.setUser(savedUser);
             employeeRepository.save(employee);
         }

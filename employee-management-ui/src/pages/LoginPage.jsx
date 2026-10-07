@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { login } from '../services/authService';
 import { useAuth } from '../context/AuthContext';
-import { Link } from 'react-router-dom';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -30,42 +29,58 @@ const LoginPage = () => {
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '80px auto', fontFamily: 'sans-serif' }}>
-      <h2>Employee Management System</h2>
-      <h3>Login</h3>
-
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '12px' }}>
-          <label>Email</label><br />
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            style={{ width: '100%', padding: '8px' }}
-          />
+    <div className="auth-page">
+      <div className="auth-card">
+        <div className="auth-header">
+          <h1>Employee Management System</h1>
+          <p>Sign in to your account</p>
         </div>
 
-        <div style={{ marginBottom: '12px' }}>
-          <label>Password</label><br />
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            style={{ width: '100%', padding: '8px' }}
-          />
-        </div>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label className="form-label" htmlFor="email">Email</label>
+            <input
+              id="email"
+              type="email"
+              className="form-input"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              autoComplete="email"
+              placeholder="you@company.com"
+            />
+          </div>
 
-        {error && <p style={{ color: 'red' }}>{error}</p>}
+          <div className="form-group">
+            <label className="form-label" htmlFor="password">Password</label>
+            <input
+              id="password"
+              type="password"
+              className="form-input"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              autoComplete="current-password"
+              placeholder="Enter your password"
+            />
+          </div>
 
-        <button type="submit" disabled={loading} style={{ padding: '8px 16px' }}>
-          {loading ? 'Logging in...' : 'Login'}
-        </button>
-      </form>
-        <p style={{ marginTop: '16px' }}>
+          {error && <div className="alert alert-error">{error}</div>}
+
+          <button
+            type="submit"
+            className="btn btn-primary"
+            style={{ width: '100%' }}
+            disabled={loading}
+          >
+            {loading ? 'Logging in...' : 'Login'}
+          </button>
+        </form>
+
+        <div className="auth-footer">
           New employee? <Link to="/register">Register here</Link>
-        </p>
+        </div>
+      </div>
     </div>
   );
 };

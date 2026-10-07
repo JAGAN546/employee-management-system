@@ -52,74 +52,124 @@ const ProfilePage = () => {
     }
   };
 
-  if (loading) return <div style={{ padding: '40px' }}>Loading profile...</div>;
-  if (error) return <div style={{ padding: '40px', color: 'red' }}>{error}</div>;
+  if (loading) {
+    return <div className="loading-state">Loading profile...</div>;
+  }
+
+  if (error) {
+    return <div className="alert alert-error">{error}</div>;
+  }
 
   return (
-    <div style={{ padding: '40px', fontFamily: 'sans-serif' }}>
-      <h2>My Profile</h2>
+    <div>
+      <div className="page-header">
+        <h1>My Profile</h1>
+        <p>View your employment details and update personal information</p>
+      </div>
 
-      <h3>Employment Details</h3>
-      <table cellPadding="6">
-        <tbody>
-          <tr><td><strong>Employee Code</strong></td><td>{profile.employeeCode}</td></tr>
-          <tr><td><strong>Name</strong></td><td>{profile.firstName} {profile.lastName}</td></tr>
-          <tr><td><strong>Email</strong></td><td>{profile.email}</td></tr>
-          <tr><td><strong>Department</strong></td><td>{profile.department?.name || '—'}</td></tr>
-          <tr><td><strong>Designation</strong></td><td>{profile.designation || '—'}</td></tr>
-          <tr><td><strong>Joining Date</strong></td><td>{profile.joiningDate}</td></tr>
-          <tr><td><strong>Status</strong></td><td>{profile.status}</td></tr>
-        </tbody>
-      </table>
-
-      <h3 style={{ marginTop: '24px' }}>Edit Personal Information</h3>
-      <form onSubmit={handleSave} style={{ maxWidth: '400px' }}>
-        <div style={{ marginBottom: '10px' }}>
-          <label>Phone</label><br />
-          <input
-            type="text"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            style={{ width: '100%', padding: '6px' }}
-          />
+      {/* Employment Details */}
+      <div className="card mb-6">
+        <div className="card-header">
+          <h3 className="card-title">Employment Details</h3>
         </div>
 
-        <div style={{ marginBottom: '10px' }}>
-          <label>Address</label><br />
-          <input
-            type="text"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            style={{ width: '100%', padding: '6px' }}
-          />
+        <div className="table-container">
+          <table className="table">
+            <tbody>
+              <tr>
+                <td style={{ width: '180px', fontWeight: 500 }}>Employee Code</td>
+                <td>{profile.employeeCode}</td>
+              </tr>
+              <tr>
+                <td style={{ fontWeight: 500 }}>Name</td>
+                <td>{profile.firstName} {profile.lastName}</td>
+              </tr>
+              <tr>
+                <td style={{ fontWeight: 500 }}>Email</td>
+                <td>{profile.email}</td>
+              </tr>
+              <tr>
+                <td style={{ fontWeight: 500 }}>Department</td>
+                <td>{profile.department?.name || '—'}</td>
+              </tr>
+              <tr>
+                <td style={{ fontWeight: 500 }}>Designation</td>
+                <td>{profile.designation || '—'}</td>
+              </tr>
+              <tr>
+                <td style={{ fontWeight: 500 }}>Joining Date</td>
+                <td>{profile.joiningDate}</td>
+              </tr>
+              <tr>
+                <td style={{ fontWeight: 500 }}>Status</td>
+                <td>{profile.status}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Edit Personal Information */}
+      <div className="card">
+        <div className="card-header">
+          <h3 className="card-title">Edit Personal Information</h3>
         </div>
 
-        <div style={{ marginBottom: '10px' }}>
-          <label>Gender</label><br />
-          <select value={gender} onChange={(e) => setGender(e.target.value)}>
-            <option value="">Select</option>
-            <option value="MALE">MALE</option>
-            <option value="FEMALE">FEMALE</option>
-            <option value="OTHER">OTHER</option>
-          </select>
-        </div>
+        <form onSubmit={handleSave} style={{ maxWidth: '420px' }}>
+          <div className="form-group">
+            <label className="form-label">Phone</label>
+            <input
+              type="text"
+              className="form-input"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="Phone number"
+            />
+          </div>
 
-        <div style={{ marginBottom: '10px' }}>
-          <label>Date of Birth</label><br />
-          <input
-            type="date"
-            value={dateOfBirth}
-            onChange={(e) => setDateOfBirth(e.target.value)}
-          />
-        </div>
+          <div className="form-group">
+            <label className="form-label">Address</label>
+            <input
+              type="text"
+              className="form-input"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              placeholder="Address"
+            />
+          </div>
 
-        {formMessage && <p style={{ color: 'green' }}>{formMessage}</p>}
-        {formError && <p style={{ color: 'red' }}>{formError}</p>}
+          <div className="form-group">
+            <label className="form-label">Gender</label>
+            <select
+              className="form-select"
+              value={gender}
+              onChange={(e) => setGender(e.target.value)}
+            >
+              <option value="">Select</option>
+              <option value="MALE">MALE</option>
+              <option value="FEMALE">FEMALE</option>
+              <option value="OTHER">OTHER</option>
+            </select>
+          </div>
 
-        <button type="submit" disabled={saving}>
-          {saving ? 'Saving...' : 'Save Changes'}
-        </button>
-      </form>
+          <div className="form-group">
+            <label className="form-label">Date of Birth</label>
+            <input
+              type="date"
+              className="form-input"
+              value={dateOfBirth}
+              onChange={(e) => setDateOfBirth(e.target.value)}
+            />
+          </div>
+
+          {formMessage && <div className="alert alert-success">{formMessage}</div>}
+          {formError && <div className="alert alert-error">{formError}</div>}
+
+          <button type="submit" className="btn btn-primary" disabled={saving}>
+            {saving ? 'Saving...' : 'Save Changes'}
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

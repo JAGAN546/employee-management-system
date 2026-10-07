@@ -1,6 +1,15 @@
 import { useState, useEffect } from 'react';
 import { checkIn, checkOut, getMyHistory } from '../services/attendanceService';
 
+const getStatusBadge = (status) => {
+  if (!status) return 'badge badge-neutral';
+  const s = status.toUpperCase();
+  if (s === 'PRESENT' || s === 'COMPLETED') return 'badge badge-success';
+  if (s === 'LATE' || s === 'HALF_DAY') return 'badge badge-warning';
+  if (s === 'ABSENT') return 'badge badge-error';
+  return 'badge badge-neutral';
+};
+
 const AttendancePage = () => {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -56,51 +65,86 @@ const AttendancePage = () => {
   };
 
   return (
-    <div style={{ padding: '40px', fontFamily: 'sans-serif' }}>
-      <h2>Attendance</h2>
-
-      <div style={{ marginBottom: '20px' }}>
-        <button onClick={handleCheckIn} disabled={actionLoading} style={{ marginRight: '10px', padding: '8px 16px' }}>
-          Check In
-        </button>
-        <button onClick={handleCheckOut} disabled={actionLoading} style={{ padding: '8px 16px' }}>
-          Check Out
-        </button>
+    <div>
+      <div className="page-header">
+        <h1>Attendance</h1>
+        <p>Check in, check out, and view your history</p>
       </div>
 
-      {actionMessage && <p style={{ color: 'green' }}>{actionMessage}</p>}
-      {actionError && <p style={{ color: 'red' }}>{actionError}</p>}
+      {/* Action buttons */}
+      <div className="card mb-6">
+        <div className="flex gap-3" style={{ flexWrap: 'wrap' }}>
+          <button
+            className="btn btn-primary"
+            onClick={handleCheckIn}
+            disabled={actionLoading}
+          >
+            {actionLoading ? 'Processing...' : 'Check In'}
+          </button>
+          <button
+            className="btn btn-secondary"
+            onClick={handleCheckOut}
+            disabled={actionLoading}
+          >
+            {actionLoading ? 'Processing...' : 'Check Out'}
+          </button>
+        </div>
 
-      <h3>History</h3>
+        {actionMessage && (
+          <div className="alert alert-success mt-4" style={{ marginBottom: 0 }}>
+            {actionMessage}
+          </div>
+        )}
+        {actionError && (
+          <div className="alert alert-error mt-4" style={{ marginBottom: 0 }}>
+            {actionError}
+          </div>
+        )}
+      </div>
 
-      {loading && <p>Loading history...</p>}
+      {/* History table */}
+      <div className="card">
+        <div className="card-header">
+          <h3 className="card-title">Attendance History</h3>
+        </div>
 
-      {!loading && history.length === 0 && <p>No attendance records yet.</p>}
+        {loading && <div className="loading-state">Loading history...</div>}
 
-      {!loading && history.length > 0 && (
-        <table border="1" cellPadding="8" style={{ borderCollapse: 'collapse' }}>
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Check In</th>
-              <th>Check Out</th>
-              <th>Status</th>
-              <th>Working Hours</th>
-            </tr>
-          </thead>
-          <tbody>
-            {history.map((record) => (
-              <tr key={record.id}>
-                <td>{record.date}</td>
-                <td>{record.checkInTime || '—'}</td>
-                <td>{record.checkOutTime || '—'}</td>
-                <td>{record.status || '—'}</td>
-                <td>{record.workingHours ?? '—'}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+        {!loading && history.length === 0 && (
+          <div className="empty-state">No attendance records yet.</div>
+        )}
+
+        {!loading && history.length > 0 && (
+          <div className="table-container">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Check In</th>
+                  <th>Check Out</th>
+                  <th>Status</th>
+                  <th>Working Hours</th>
+                </tr>
+              </thead>
+              <tbody>
+                {history.map((record) => (
+                  <tr key={record.id}>
+                    <td>{record.date}</td>
+                    <td>{record.checkInTime || '—'}</td>
+                    <td>{record.checkOutTime || '—'}</td>
+                    <td>
+                      <span className={getStatusBadge(record.status)}>
+                        {record.status || '—'}
+                      </span>
+                    </td>
+                    <td>{record.workingHours ?? '—'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

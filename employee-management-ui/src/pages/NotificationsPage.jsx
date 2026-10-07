@@ -46,44 +46,64 @@ const NotificationsPage = () => {
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   return (
-    <div style={{ padding: '40px', fontFamily: 'sans-serif' }}>
-      <h2>Notifications {unreadCount > 0 && `(${unreadCount} unread)`}</h2>
+    <div>
+      <div className="page-header">
+        <h1>Notifications</h1>
+        <p>
+          {unreadCount > 0
+            ? `You have ${unreadCount} unread notification${unreadCount > 1 ? 's' : ''}`
+            : 'All caught up'}
+        </p>
+      </div>
+
+      {error && <div className="alert alert-error">{error}</div>}
 
       {unreadCount > 0 && (
-        <button onClick={handleMarkAllAsRead} style={{ marginBottom: '16px' }}>
-          Mark All as Read
-        </button>
+        <div className="mb-4">
+          <button className="btn btn-secondary btn-sm" onClick={handleMarkAllAsRead}>
+            Mark All as Read
+          </button>
+        </div>
       )}
 
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {loading && <p>Loading notifications...</p>}
-      {!loading && notifications.length === 0 && <p>No notifications.</p>}
+      <div className="card">
+        {loading && <div className="loading-state">Loading notifications...</div>}
 
-      {!loading && notifications.length > 0 && (
-        <ul style={{ listStyle: 'none', padding: 0 }}>
-          {notifications.map((n) => (
-            <li
-              key={n.id}
-              style={{
-                padding: '12px',
-                marginBottom: '8px',
-                border: '1px solid #ccc',
-                backgroundColor: n.read ? '#f5f5f5' : '#e6f0ff',
-              }}
-            >
-              <div>{n.message}</div>
-              <div style={{ fontSize: '12px', color: '#666' }}>
-                {n.type} · {new Date(n.createdAt).toLocaleString()}
+        {!loading && notifications.length === 0 && (
+          <div className="empty-state">No notifications.</div>
+        )}
+
+        {!loading && notifications.length > 0 && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {notifications.map((n) => (
+              <div
+                key={n.id}
+                style={{
+                  padding: '16px',
+                  borderRadius: '8px',
+                  border: '1px solid var(--border)',
+                  backgroundColor: n.read ? 'var(--surface)' : 'var(--primary-light)',
+                }}
+              >
+                <div style={{ marginBottom: '6px', fontWeight: n.read ? 400 : 500 }}>
+                  {n.message}
+                </div>
+                <div className="text-secondary" style={{ fontSize: '13px' }}>
+                  {n.type} · {new Date(n.createdAt).toLocaleString()}
+                </div>
+                {!n.read && (
+                  <button
+                    className="btn btn-secondary btn-sm mt-2"
+                    onClick={() => handleMarkAsRead(n.id)}
+                  >
+                    Mark as Read
+                  </button>
+                )}
               </div>
-              {!n.read && (
-                <button onClick={() => handleMarkAsRead(n.id)} style={{ marginTop: '6px' }}>
-                  Mark as Read
-                </button>
-              )}
-            </li>
-          ))}
-        </ul>
-      )}
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

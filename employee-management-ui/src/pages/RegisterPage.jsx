@@ -29,53 +29,65 @@ const RegisterPage = () => {
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '80px auto', fontFamily: 'sans-serif' }}>
-      <h2>Employee Management System</h2>
-      <h3>Register</h3>
-      <p style={{ fontSize: '14px', color: '#555' }}>
-        Use the same email address HR used when adding you to the system.
-      </p>
+    <div className="auth-page">
+      <div className="auth-card">
+        <div className="auth-header">
+          <h1>Create Account</h1>
+          <p>Use the same email address HR used when adding you to the system.</p>
+        </div>
 
-      {success ? (
-        <p style={{ color: 'green' }}>
-          Registration successful. Redirecting to login...
-        </p>
-      ) : (
-        <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: '12px' }}>
-            <label>Email</label><br />
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              style={{ width: '100%', padding: '8px' }}
-            />
+        {success ? (
+          <div className="alert alert-success">
+            Registration successful. Redirecting to login...
           </div>
+        ) : (
+          <form onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label className="form-label" htmlFor="email">Email</label>
+              <input
+                id="email"
+                type="email"
+                className="form-input"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                autoComplete="email"
+                placeholder="you@company.com"
+              />
+            </div>
 
-          <div style={{ marginBottom: '12px' }}>
-            <label>Password</label><br />
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={6}
-              style={{ width: '100%', padding: '8px' }}
-            />
-          </div>
+            <div className="form-group">
+              <label className="form-label" htmlFor="password">Password</label>
+              <input
+                id="password"
+                type="password"
+                className="form-input"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={6}
+                autoComplete="new-password"
+                placeholder="Minimum 6 characters"
+              />
+            </div>
 
-          {error && <p style={{ color: 'red' }}>{error}</p>}
+            {error && <div className="alert alert-error">{error}</div>}
 
-          <button type="submit" disabled={loading} style={{ padding: '8px 16px' }}>
-            {loading ? 'Registering...' : 'Register'}
-          </button>
-        </form>
-      )}
+            <button
+              type="submit"
+              className="btn btn-primary"
+              style={{ width: '100%' }}
+              disabled={loading}
+            >
+              {loading ? 'Registering...' : 'Register'}
+            </button>
+          </form>
+        )}
 
-      <p style={{ marginTop: '16px' }}>
-        Already have an account? <Link to="/login">Login</Link>
-      </p>
+        <div className="auth-footer">
+          Already have an account? <Link to="/login">Login</Link>
+        </div>
+      </div>
     </div>
   );
 };
